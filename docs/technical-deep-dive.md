@@ -10,12 +10,12 @@ deterministic simulation testing harness.
 Each symbol side is a contiguous array of price levels indexed by offset from a
 session anchor, with two bitsets over the level array: one for any occupancy, one
 for non peg occupancy. Best price is a cached index refreshed on the rare event
-that the touch empties; next-worse walks use a word-at-a-time scan over the bitset
+that the touch empties; next worse walks use a word at a time scan over the bitset
 (countr_zero / countl_zero). Each level holds an intrusive doubly linked FIFO of
 order nodes plus aggregate quantity and counts. Cancel by id is O(1): id to pool
 index, unlink, update aggregates and occupancy.
 
-Non displayed interest (hidden midpoint pegs) and not-yet-resting interest (parked
+Non displayed interest (hidden midpoint pegs) and not yet resting interest (parked
 pegs, pending stops, queued market orders) live in per symbol sequence ordered
 vectors that hold order ids, not pool indices. Holding ids means a released and
 reused pool slot can never be mistaken for the original order. These vectors are
@@ -41,8 +41,8 @@ Order types and their exact rules are in `semantics.md`, which is
 normative: limit, market, IOC, FOK, iceberg, primary and market and midpoint pegs,
 stop and stop limit, self match prevention with three policies, and opening and
 closing auctions. FOK fillability is computed against the displayed book only,
-before any fill, and the order's SMP policy is coerced to cancel-resting during the
-sweep so the all-or-none promise cannot break midway.
+before any fill, and the order's SMP policy is coerced to cancel resting during the
+sweep so the all or none promise cannot break midway.
 
 ## Pegs and the reprice fixed point
 
@@ -113,7 +113,7 @@ updated on every order change, so a full book equality check is one 64 bit compa
 
 Snapshot save writes a header, per side ladder bases, and all live orders (ladder
 orders in FIFO walk order, the rest in id order), and verifies the reconstructed
-digest on load. Snapshot-plus-tail replay producing the same hash as full replay is
+digest on load. Snapshot plus tail replay producing the same hash as full replay is
 a test, which catches any state the snapshot forgot to carry.
 
 ## Deterministic simulation testing

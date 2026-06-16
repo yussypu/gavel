@@ -45,7 +45,7 @@ Full distributions, methodology, and what would change on Linux x86_64 are in
 
 - `docs/semantics.md` the normative contract: code implements it, tests test it.
 - `docs/design.md` the design rationale and tradeoffs.
-- `docs/architecture.md` the as-built structure.
+- `docs/architecture.md` the as built structure.
 - `docs/technical-deep-dive.md` the subtle internals: book, pegs, stops, auction cross.
 - `docs/benchmark-report.md` the measurements and method.
 - `docs/lessons-learned.md` what the verification harness taught.

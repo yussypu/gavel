@@ -1,7 +1,7 @@
 # gavel design
 
 gavel is a deterministic exchange in modern C++, verification first. This document
-records the design rationale and the tradeoffs behind it. The as-built structure is
+records the design rationale and the tradeoffs behind it. The as built structure is
 in architecture.md, the internals in technical-deep-dive.md, and the normative
 behavior in semantics.md.
 

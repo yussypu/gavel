@@ -29,7 +29,7 @@ length prefixed event stream through a single sink that hashes every byte.
   output emitter. Freestanding, no I/O, no clock reads, no third party deps.
   - `types.hpp` strong Price (half ticks) and the order, side, tif, state enums.
   - `book.hpp` per symbol ladder: contiguous price levels over a window, bitset
-    occupancy for best and next-worse walks, intrusive FIFO per level, plus
+    occupancy for best and next worse walks, intrusive FIFO per level, plus
     sequence ordered auxiliary lists for pegs, hidden midpoints, stops, and queued
     market orders.
   - `pool.hpp` slab allocator for order nodes, indexed dense from 1.
@@ -72,7 +72,7 @@ length prefixed event stream through a single sink that hashes every byte.
    updated O(1) on every order change).
 4. The test suite proves identical output hashes across repeated runs, across
    optimization levels O0/O2/O3, across address space randomization reruns, and
-   between snapshot-plus-tail replay and full replay.
+   between snapshot plus tail replay and full replay.
 
 ## Boundary
 

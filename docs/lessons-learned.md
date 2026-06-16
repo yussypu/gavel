@@ -44,7 +44,7 @@ limit. The reason was a real scaling property: the peg heavy and tight book pres
 grow the live order set roughly linearly, and the reprice and book passes cost grows
 with it, so those presets dominate wall clock unpredictably. The fix was to measure
 each preset's throughput, then size event counts per preset and split the soak into a
-dense check-every-event tier, a check-every-thousand tier, and a bulk tier. Picking a
+dense check every event tier, a check every thousand tier, and a bulk tier. Picking a
 bounded size that completes and reporting the real event count is more honest than
 claiming a billion events that never finished.
 

@@ -1,0 +1,11 @@
+# build directories
+build/
+build-*/
+
+# extracted NASDAQ ITCH market data, regenerate with scripts/get_data.sh
+data/**/*.gvl
+data/**/*.exec
+data/**/extract.log
+
+# generated logs
+*.log

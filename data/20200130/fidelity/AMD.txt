@@ -1,0 +1,16 @@
+stream records                 400981
+venue executions E             11711
+venue executions C (excluded)  320
+hard guarantees (displayed)
+  price priority violations    0 (0.000000 per E)
+  counterfactual disagreements 0 (0.000000 per E)
+reported (confounded by hidden interest, see docs)
+  time priority divergence     209 (0.017846 per E)
+  book agreement               80 of 81 checkpoints (0.9877)
+informational
+  engine matches on adds       24
+  exec on missing order        0
+  unknown target rejects       13
+  other rejects                0
+  reconstructor replace misses 0
+result                         PASS

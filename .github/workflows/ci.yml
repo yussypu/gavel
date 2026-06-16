@@ -1,0 +1,86 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            name: macos-arm64
+            sanitize: OFF
+          - os: macos-14
+            name: macos-arm64-asan-ubsan
+            sanitize: ON
+          - os: ubuntu-24.04
+            name: linux-x86_64
+            sanitize: OFF
+          - os: ubuntu-24.04
+            name: linux-x86_64-asan-ubsan
+            sanitize: ON
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: install ninja (linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: install ninja (macos)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+      - name: configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DGAVEL_SANITIZE=${{ matrix.sanitize }}
+      - name: build
+        run: ninja -C build
+      - name: test
+        run: ctest --test-dir build --output-on-failure
+      - name: dst smoke
+        run: ./build/tools/gavel-sim --seed 7 --events 200000 --check-every 100 --snapshot-test
+
+  hardening-matrix:
+    runs-on: macos-14
+    name: hardening-build-matrix
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install ninja
+      - name: unhardened build
+        run: |
+          cmake -S . -B build-h0 -G Ninja -DCMAKE_BUILD_TYPE=Release -DGAVEL_HARDENING=0
+          ninja -C build-h0
+      - name: hardened build
+        run: |
+          cmake -S . -B build-h1 -G Ninja -DCMAKE_BUILD_TYPE=Release -DGAVEL_HARDENING=1
+          ninja -C build-h1
+      - name: determinism across hardening levels
+        run: |
+          ./build-h0/tools/gavel-sim --seed 42 --events 500000 --check-every 100000 > h0.txt
+          ./build-h1/tools/gavel-sim --seed 42 --events 500000 --check-every 100000 > h1.txt
+          h0=$(grep -oE 'hash=0x[0-9a-f]+' h0.txt | head -1)
+          h1=$(grep -oE 'hash=0x[0-9a-f]+' h1.txt | head -1)
+          echo "h0=$h0 h1=$h1"
+          test -n "$h0" && test "$h0" = "$h1"
+
+  determinism-opt-levels:
+    runs-on: ubuntu-24.04
+    name: determinism-O0-vs-O3
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: build O0 and O3
+        run: |
+          cmake -S . -B build-o0 -G Ninja -DCMAKE_BUILD_TYPE=Debug
+          ninja -C build-o0 gavel-sim
+          cmake -S . -B build-o3 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          ninja -C build-o3 gavel-sim
+      - name: compare output hashes
+        run: |
+          ./build-o0/tools/gavel-sim --seed 99 --events 300000 --check-every 100000 | tee o0.txt
+          ./build-o3/tools/gavel-sim --seed 99 --events 300000 --check-every 100000 | tee o3.txt
+          h0=$(grep -oE 'hash=0x[0-9a-f]+' o0.txt | head -1)
+          h3=$(grep -oE 'hash=0x[0-9a-f]+' o3.txt | head -1)
+          echo "O0=$h0 O3=$h3"
+          test -n "$h0" && test "$h0" = "$h3"

@@ -1,0 +1,17 @@
+add_library(doctest_main STATIC doctest_main.cpp)
+target_include_directories(doctest_main PUBLIC ${CMAKE_SOURCE_DIR}/third_party/doctest)
+
+function(gavel_test name)
+  add_executable(${name} ${name}.cpp)
+  target_link_libraries(${name} PRIVATE gavel_core doctest_main)
+  target_include_directories(${name} PRIVATE ${CMAKE_SOURCE_DIR}/third_party/doctest)
+  add_test(NAME ${name} COMMAND ${name})
+endfunction()
+
+gavel_test(smoke_test)
+gavel_test(engine_semantics_test)
+gavel_test(idmap_test)
+gavel_test(spsc_test)
+gavel_test(dst_test)
+gavel_test(itch_test)
+gavel_test(histogram_test)
